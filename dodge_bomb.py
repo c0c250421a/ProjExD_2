@@ -54,6 +54,16 @@ def gameover(screen :pg.surface) -> None:
     pg.display.update()
     time.sleep(5)
 
+def timer(tmr : int , screen : pg.surface) -> None:
+    """
+    タイマーを表示する関数
+    引数:tmr,screen
+    戻り値:なし
+    """
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render(str(tmr / 50) + "second" ,True, (0, 0, 0))
+    screen.blit(txt, [0, 0])
+
 def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
     """
     こうかとんが向いている向きを指定する関数
@@ -74,6 +84,7 @@ def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
                 (5,-5): pg.transform.rotozoom(img , 315, 1), # 右下
     }
     return kk_dict
+
 
 
 def main():
@@ -130,7 +141,10 @@ def main():
         bb_rct.move_ip(vx,vy)
         screen.blit(bb_img,bb_rct)
 
+        timer(tmr,screen) #タイマーを表示
+
         pg.display.update()
+
         tmr += 1
         clock.tick(50)
 
