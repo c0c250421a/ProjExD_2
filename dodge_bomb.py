@@ -33,7 +33,7 @@ def gameover(screen :pg.surface) -> None:
     ゲームオーバー画面の表示を行う
     こうかとんが爆弾に触れた時に、
     画面をブラックアウトし泣いているこうかとん画像と「GameOver」の文字を表示。
-    引数：screen
+    引数：screenのSurface
     戻り値:なし
     """
     bg_img = pg.image.load("fig/pg_bg.jpg")
@@ -57,11 +57,11 @@ def gameover(screen :pg.surface) -> None:
 def timer(tmr : int , screen : pg.surface) -> None:
     """
     タイマーを表示する関数
-    引数:tmr,screen
+    引数:tmr(whileが一回回るごとに1増える変数),screenのSurface
     戻り値:なし
     """
     fonto = pg.font.Font(None, 80)
-    txt = fonto.render(str(tmr / 50) + "second" ,True, (0, 0, 0))
+    txt = fonto.render(str(tmr / 50) ,True, (0, 0, 0))
     screen.blit(txt, [0, 0])
 
 def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
@@ -85,7 +85,19 @@ def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
     }
     return kk_dict
 
+def  init_bb_imgs(img : pg.Surface) -> tuple[list[pg.Surface], list[int]] :
+    """
+    """
 
+    bb_imgs = []
+    for r in range(1, 11):
+        img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_imgs.append(img)
+
+    bb_accs = [a for a in range(1, 11)]
+
+    return bb_imgs,bb_accs
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -107,6 +119,7 @@ def main():
     tmr = 0
 
     kk_imgs = get_kk_imgs(kk_img) # 画像の向きを決める辞書を取得
+    bb_imgs = init_bb_imgs(bb_img) # 爆弾の大きさと速度の辞書を取得
 
     while True:
         for event in pg.event.get():
