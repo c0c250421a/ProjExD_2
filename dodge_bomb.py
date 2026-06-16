@@ -119,7 +119,7 @@ def main():
     tmr = 0
 
     kk_imgs = get_kk_imgs(kk_img)  # 画像の向きを決める辞書を取得
-    bb_imgs = init_bb_imgs(bb_img)  # 爆弾の大きさと速度の辞書を取得
+    bb_imgs,bb_accs = init_bb_imgs(bb_img)  # 爆弾の大きさと速度の辞書を取得
 
     while True:
         for event in pg.event.get():
@@ -151,7 +151,13 @@ def main():
             vx *= -1
         if not y:
             vy *= -1
-        bb_rct.move_ip(vx,vy)
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_rct.move_ip(avx,avy)
+        bb_rct.width = bb_img.get_rect().width
+        bb_rct.height = bb_img.get_rect().height
+        bb_img.set_colorkey((0, 0, 0))
         screen.blit(bb_img,bb_rct)
 
         timer(tmr,screen)  #タイマーを表示
