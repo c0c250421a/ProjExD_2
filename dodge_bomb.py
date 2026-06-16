@@ -9,10 +9,23 @@ WIDTH, HEIGHT = 1100, 650
 DELTA = {pg.K_UP:(0,-5), # 上矢印キー
          pg.K_DOWN:(0,5), # 下矢印キー
          pg.K_LEFT:(-5,0), # 左矢印キー
-         pg.K_RIGHT:(5,0),} # 右矢印キー
-
+         pg.K_RIGHT:(5,0), # 右矢印キー
+}
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+
+def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
+    """
+    引数：こうかとんRectもしくは爆弾Rect
+    戻り値：判定結果タプル(横,縦)
+    True:画面内 , False:画面外
+    """
+    x , y = True , True
+    if rct.left < 0 or WIDTH < rct.right:
+        x = False
+    if rct.top < 0 or HEIGHT < rct.bottom:
+        y = False
+    return x,y
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -27,6 +40,8 @@ def main():
     bb_img.set_colorkey((0, 0, 0))
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randrange(0,1100), random.randrange(0,650)
+    vx = 5 
+    vy = 5
     
     clock = pg.time.Clock()
     tmr = 0
@@ -35,12 +50,13 @@ def main():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
-
-        bb_rct.move_ip(5,5)
         
+        if kk_rct.colliderect(bb_rct):
+            print("ゲームオーバー")
+            return
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
-
         # if key_lst[pg.K_UP]:
         #     sum_mv[1] -= 5
         # if key_lst[pg.K_DOWN]:
@@ -49,15 +65,23 @@ def main():
         #     sum_mv[0] -= 5
         # if key_lst[pg.K_RIGHT]:
         #     sum_mv[0] += 5
-
         for key,mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0] # 横の移動
                 sum_mv[1] += mv[1] # 縦の移動
-
         kk_rct.move_ip(sum_mv)
+        if check_bound(kk_rct) != (True,True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
+
+        x , y = check_bound(bb_rct)
+        if not x:
+            vx *= -1
+        if not y:
+            vy *= -1
+        bb_rct.move_ip(vx,vy)
         screen.blit(bb_img,bb_rct)
+
         pg.display.update()
         tmr += 1
         clock.tick(50)
