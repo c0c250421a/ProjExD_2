@@ -29,6 +29,13 @@ def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
     return x,y
 
 def gameover(screen :pg.surface) -> None:
+    """
+    ゲームオーバー画面の表示を行う
+    こうかとんが爆弾に触れた時に、
+    画面をブラックアウトし泣いているこうかとん画像と「GameOver」の文字を表示。
+    引数：screen
+    戻り値:なし
+    """
     bg_img = pg.image.load("fig/pg_bg.jpg")
     screen.blit(bg_img,[0,0])
 
@@ -48,6 +55,13 @@ def gameover(screen :pg.surface) -> None:
     time.sleep(5)
 
 def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
+    """
+    こうかとんが向いている向きを指定する関数
+    現在移動合計値をタプルで管理しているため、
+    タプルをキーとして画像を回転させている。
+    引数：画像Surface
+    戻り値:移動合計値タプルをキーにした角度を変えた画像
+    """
     kk_dict = {
                 (0,0): pg.transform.rotozoom(img , 0 , 1), # キー押下がない場合
                 (5,0): pg.transform.rotozoom(img , 0, 1), # 右
@@ -81,7 +95,7 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
 
-    kk_imgs = get_kk_imgs(kk_img)
+    kk_imgs = get_kk_imgs(kk_img) # 画像の向きを決める辞書を取得
 
     while True:
         for event in pg.event.get():
@@ -102,9 +116,9 @@ def main():
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True,True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) # 動きをなかったことにする
-        kk_img = kk_imgs[tuple(sum_mv)]
-        kk_img = pg.transform.flip(kk_img, True, False)
-        if sum_mv[0] == -5:
+        kk_img = kk_imgs[tuple(sum_mv)] # whileの手前で取得した辞書を基に画像を回転
+        kk_img = pg.transform.flip(kk_img, True, False) # 初期状態を右にするために左右反転
+        if sum_mv[0] == -5: # 左を向いたときに上下反転
             kk_img = pg.transform.flip(kk_img, False, True)
         screen.blit(kk_img, kk_rct)
 
