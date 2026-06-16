@@ -7,10 +7,10 @@ import time
 
 WIDTH, HEIGHT = 1100, 650
 
-DELTA = {pg.K_UP:(0,-5), # 上矢印キー
-         pg.K_DOWN:(0,5), # 下矢印キー
-         pg.K_LEFT:(-5,0), # 左矢印キー
-         pg.K_RIGHT:(5,0), # 右矢印キー
+DELTA = {pg.K_UP:(0,-5),  # 上矢印キー
+         pg.K_DOWN:(0,5),  # 下矢印キー
+         pg.K_LEFT:(-5,0),  # 左矢印キー
+         pg.K_RIGHT:(5,0),  # 右矢印キー
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -73,15 +73,15 @@ def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
     戻り値:移動合計値タプルをキーにした角度を変えた画像
     """
     kk_dict = {
-                (0,0): pg.transform.rotozoom(img , 0 , 1), # キー押下がない場合
-                (5,0): pg.transform.rotozoom(img , 0, 1), # 右
-                (5,5): pg.transform.rotozoom(img , 45, 1), # 右上
-                (0,5): pg.transform.rotozoom(img , 90, 1), # 上
-                (-5,0): pg.transform.rotozoom(img , 180 ,1), # 左
-                (-5,-5): pg.transform.rotozoom(img , 135 , 1), # 左下
-                (-5,5): pg.transform.rotozoom(img , 225 , 1), # 左上
-                (0,-5): pg.transform.rotozoom(img , 270 , 1), # 下
-                (5,-5): pg.transform.rotozoom(img , 315, 1), # 右下
+                (0,0): pg.transform.rotozoom(img , 0 , 1),  # キー押下がない場合
+                (5,0): pg.transform.rotozoom(img , 0, 1),  # 右
+                (5,5): pg.transform.rotozoom(img , 45, 1),  # 右上
+                (0,5): pg.transform.rotozoom(img , 90, 1),  # 上
+                (-5,0): pg.transform.rotozoom(img , 180 ,1),  # 左
+                (-5,-5): pg.transform.rotozoom(img , 135 , 1),  # 左下
+                (-5,5): pg.transform.rotozoom(img , 225 , 1),  # 左上
+                (0,-5): pg.transform.rotozoom(img , 270 , 1),  # 下
+                (5,-5): pg.transform.rotozoom(img , 315, 1),  # 右下
     }
     return kk_dict
 
@@ -118,8 +118,8 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
 
-    kk_imgs = get_kk_imgs(kk_img) # 画像の向きを決める辞書を取得
-    bb_imgs = init_bb_imgs(bb_img) # 爆弾の大きさと速度の辞書を取得
+    kk_imgs = get_kk_imgs(kk_img)  # 画像の向きを決める辞書を取得
+    bb_imgs = init_bb_imgs(bb_img)  # 爆弾の大きさと速度の辞書を取得
 
     while True:
         for event in pg.event.get():
@@ -135,14 +135,14 @@ def main():
         sum_mv = [0, 0]
         for key,mv in DELTA.items():
             if key_lst[key]:
-                sum_mv[0] += mv[0] # 横の移動
-                sum_mv[1] += mv[1] # 縦の移動
+                sum_mv[0] += mv[0]  # 横の移動
+                sum_mv[1] += mv[1]  # 縦の移動
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True,True):
-            kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) # 動きをなかったことにする
-        kk_img = kk_imgs[tuple(sum_mv)] # whileの手前で取得した辞書を基に画像を回転
-        kk_img = pg.transform.flip(kk_img, True, False) # 初期状態を右にするために左右反転
-        if sum_mv[0] == -5: # 左を向いたときに上下反転
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 動きをなかったことにする
+        kk_img = kk_imgs[tuple(sum_mv)]  # whileの手前で取得した辞書を基に画像を回転
+        kk_img = pg.transform.flip(kk_img, True, False)  # 初期状態を右にするために左右反転
+        if sum_mv[0] == -5:  # 左を向いたときに上下反転
             kk_img = pg.transform.flip(kk_img, False, True)
         screen.blit(kk_img, kk_rct)
 
@@ -154,7 +154,7 @@ def main():
         bb_rct.move_ip(vx,vy)
         screen.blit(bb_img,bb_rct)
 
-        timer(tmr,screen) #タイマーを表示
+        timer(tmr,screen)  #タイマーを表示
 
         pg.display.update()
 
