@@ -36,19 +36,19 @@ def gameover(screen :pg.surface) -> None:
     引数：screenのSurface
     戻り値:なし
     """
-    bg_img = pg.image.load("fig/pg_bg.jpg")
+    bg_img = pg.image.load("fig/pg_bg.jpg")  # 背景画像
     screen.blit(bg_img,[0,0])
 
-    bl_img = pg.Surface((WIDTH, HEIGHT))
+    bl_img = pg.Surface((WIDTH, HEIGHT))  # 黒い四角形
     pg.draw.rect(bl_img, (0,0,0), pg.Rect(0,0,WIDTH, HEIGHT))
     bl_img.set_alpha(200)
     screen.blit(bl_img,[0,0])
 
-    fonto = pg.font.Font(None, 80)
+    fonto = pg.font.Font(None, 80)  # 「GameOver」の文字
     txt = fonto.render("GameOver",True, (255, 255, 255))
     screen.blit(txt, [400, 300])
 
-    kk_img = pg.image.load("fig/8.png")
+    kk_img = pg.image.load("fig/8.png")  # こうかとん（泣）
     screen.blit(kk_img,[700,300])
 
     pg.display.update()
@@ -61,7 +61,7 @@ def timer(tmr : int , screen : pg.surface) -> None:
     戻り値:なし
     """
     fonto = pg.font.Font(None, 80)
-    txt = fonto.render(str(tmr / 50) ,True, (0, 0, 0))
+    txt = fonto.render(str(tmr / 50) ,True, (0, 0, 0))  # whileのtmrを利用してタイマー表示
     screen.blit(txt, [0, 0])
 
 def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
@@ -87,15 +87,17 @@ def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
 
 def  init_bb_imgs(img : pg.Surface) -> tuple[list[pg.Surface], list[int]] :
     """
+    爆弾の大きさと速度を変えるためのリストを出力する関数
+    引数:爆弾の画像Surface
+    戻り値:画像Surfaceのリストと速度のリストのタプル
     """
-
     bb_imgs = []
-    for r in range(1, 11):
+    for r in range(1, 11):  # 10段階に分けて大きさを設定
         img = pg.Surface((20*r, 20*r))
         pg.draw.circle(img, (255, 0, 0), (10*r, 10*r), 10*r)
         bb_imgs.append(img)
 
-    bb_accs = [a for a in range(1, 11)]
+    bb_accs = [a for a in range(1, 11)]  # 10段階に分けて速さを設定
 
     return bb_imgs,bb_accs
 
@@ -151,13 +153,13 @@ def main():
             vx *= -1
         if not y:
             vy *= -1
-        avx = vx*bb_accs[min(tmr//500, 9)]
+        avx = vx*bb_accs[min(tmr//500, 9)]  # 10秒ごとに速度を適用
         avy = vy*bb_accs[min(tmr//500, 9)]
-        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]  # 10秒ごとに大きさを適用
         bb_rct.move_ip(avx,avy)
-        bb_rct.width = bb_img.get_rect().width
+        bb_rct.width = bb_img.get_rect().width  # 大きさを更新
         bb_rct.height = bb_img.get_rect().height
-        bb_img.set_colorkey((0, 0, 0))
+        bb_img.set_colorkey((0, 0, 0))  # 背景を透過
         screen.blit(bb_img,bb_rct)
 
         timer(tmr,screen)  #タイマーを表示
