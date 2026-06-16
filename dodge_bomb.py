@@ -47,6 +47,21 @@ def gameover(screen :pg.surface) -> None:
     pg.display.update()
     time.sleep(5)
 
+def get_kk_imgs(img : pg.surface) -> dict[tuple[int, int], pg.Surface]:
+    kk_dict = {
+                (0,0): pg.transform.rotozoom(img , 0 , 1), # キー押下がない場合
+                (5,0): pg.transform.rotozoom(img , 0, 1), # 右
+                (5,5): pg.transform.rotozoom(img , 45, 1), # 右上
+                (0,5): pg.transform.rotozoom(img , 90, 1), # 上
+                (-5,0): pg.transform.rotozoom(img , 180 ,1), # 左
+                (-5,-5): pg.transform.rotozoom(img , 135 , 1), # 左下
+                (-5,5): pg.transform.rotozoom(img , 225 , 1), # 左上
+                (0,-5): pg.transform.rotozoom(img , 270 , 1), # 下
+                (5,-5): pg.transform.rotozoom(img , 315, 1), # 右下
+    }
+    return kk_dict
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -65,6 +80,9 @@ def main():
     
     clock = pg.time.Clock()
     tmr = 0
+
+    kk_imgs = get_kk_imgs(kk_img)
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -77,21 +95,17 @@ def main():
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
-        # if key_lst[pg.K_UP]:
-        #     sum_mv[1] -= 5
-        # if key_lst[pg.K_DOWN]:
-        #     sum_mv[1] += 5
-        # if key_lst[pg.K_LEFT]:
-        #     sum_mv[0] -= 5
-        # if key_lst[pg.K_RIGHT]:
-        #     sum_mv[0] += 5
         for key,mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0] # 横の移動
                 sum_mv[1] += mv[1] # 縦の移動
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True,True):
-            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) # 動きをなかったことにする
+        kk_img = kk_imgs[tuple(sum_mv)]
+        kk_img = pg.transform.flip(kk_img, True, False)
+        if sum_mv[0] == -5:
+            kk_img = pg.transform.flip(kk_img, False, True)
         screen.blit(kk_img, kk_rct)
 
         x , y = check_bound(bb_rct)
