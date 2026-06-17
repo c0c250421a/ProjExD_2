@@ -116,7 +116,6 @@ def main():
     while True:
             x = random.randrange(0, WIDTH)
             y = random.randrange(0, HEIGHT)
-
             if ((x-300)**2 + (y-200)**2)**0.5 >= 200:
                 break
     bb_rct.center = x, y
@@ -146,8 +145,11 @@ def main():
                 sum_mv[0] += mv[0]  # 横の移動
                 sum_mv[1] += mv[1]  # 縦の移動
         kk_rct.move_ip(sum_mv)
-        if check_bound(kk_rct) != (True,True):
-            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 動きをなかったことにする
+        yoko, tate = check_bound(kk_rct)
+        if not yoko:
+            kk_rct.move_ip(-sum_mv[0], 0)
+        if not tate:
+            kk_rct.move_ip(0, -sum_mv[1])  # 動きをなかったことにする
         kk_img = kk_imgs[tuple(sum_mv)]  # whileの手前で取得した辞書を基に画像を回転
         kk_img = pg.transform.flip(kk_img, True, False)  # 初期状態を右にするために左右反転
         if sum_mv[0] == -5:  # 左を向いたときに上下反転
