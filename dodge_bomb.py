@@ -113,7 +113,13 @@ def main():
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
     bb_img.set_colorkey((0, 0, 0))
     bb_rct = bb_img.get_rect()
-    bb_rct.center = random.randrange(0,1100), random.randrange(0,650)
+    while True:
+            x = random.randrange(0, WIDTH)
+            y = random.randrange(0, HEIGHT)
+
+            if ((x-300)**2 + (y-200)**2)**0.5 >= 200:
+                break
+    bb_rct.center = x, y
     vx = 5 
     vy = 5
     
@@ -151,14 +157,22 @@ def main():
         x , y = check_bound(bb_rct)
         if not x:
             vx *= -1
+            if bb_rct.left < 0:  # 跳ね戻り時埋まらない対策
+                bb_rct.left = 0
+            if bb_rct.right > WIDTH:
+                bb_rct.right = WIDTH
         if not y:
             vy *= -1
+            if bb_rct.top < 0:  # 跳ね戻り時埋まらない対策
+                bb_rct.top = 0
+            if bb_rct.bottom > HEIGHT:
+                bb_rct.bottom = HEIGHT
         avx = vx*bb_accs[min(tmr//500, 9)]  # 10秒ごとに速度を適用
         avy = vy*bb_accs[min(tmr//500, 9)]
-        bb_img = bb_imgs[min(tmr//500, 9)]  # 10秒ごとに大きさを適用
         bb_rct.move_ip(avx,avy)
-        bb_rct.width = bb_img.get_rect().width  # 大きさを更新
-        bb_rct.height = bb_img.get_rect().height
+        center = bb_rct.center  # 現在の座標を記録
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_rct = bb_img.get_rect(center=center)  # 座標を維持したまま大きさを更新
         bb_img.set_colorkey((0, 0, 0))  # 背景を透過
         screen.blit(bb_img,bb_rct)
 
